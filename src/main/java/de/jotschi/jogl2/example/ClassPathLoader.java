@@ -18,9 +18,7 @@ public class ClassPathLoader implements LoaderAction {
 		
 		try {
 			File tmpFile = writeTmpFile(ins, filename);
-			System.out.println(tmpFile);
 			System.load(tmpFile.getAbsolutePath());
-			System.out.println("loadLibrary:" + libname);
 			tmpFile.delete();
 		} catch (IOException e) {
 			e.printStackTrace();
