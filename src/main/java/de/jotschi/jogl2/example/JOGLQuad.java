@@ -23,6 +23,8 @@ import com.jogamp.common.jvm.JNILibLoaderBase;
 import com.jogamp.gluegen.runtime.NativeLibLoader;
 import com.jogamp.opengl.util.Animator;
 
+import demos.common.ClassPathLoader;
+
 /**
  * ported to JOGL 2.0 by Julien Gouesse (http://tuer.sourceforge.net)
  */
