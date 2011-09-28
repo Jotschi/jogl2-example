@@ -1,7 +1,10 @@
 package de.jotschi.jogl2.example;
 
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Frame;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.IOException;
@@ -30,13 +33,15 @@ import demos.common.ClassPathLoader;
  * Simple JOGL 2 - GLSL Example
  */
 @SuppressWarnings("serial")
-public class JOGL2GLSLExample extends Frame implements GLEventListener {
+public class JOGL2GLSLExample extends Frame implements GLEventListener,
+		KeyListener {
 	private static final int CANVAS_WIDTH = 640; // Width of the drawable
 	private static final int CANVAS_HEIGHT = 480; // Height of the drawable
 	private static final int FPS = 60; // Animator's target frames per second
 	float rotateT = 0.0f;
 	static GLU glu = new GLU();
 	int timeUniform;
+
 	static {
 		ClassPathLoader loader = new ClassPathLoader();
 		loader.loadLibrary("gluegen-rt", true);
@@ -88,16 +93,15 @@ public class JOGL2GLSLExample extends Frame implements GLEventListener {
 	@Override
 	public void init(GLAutoDrawable gLDrawable) {
 		GL2 gl = gLDrawable.getGL().getGL2();
-		
+
 		gl.glShadeModel(GLLightingFunc.GL_SMOOTH);
 		gl.glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 		gl.glClearDepth(1.0f);
 		gl.glEnable(GL.GL_DEPTH_TEST);
 		gl.glDepthFunc(GL.GL_LEQUAL);
 		gl.glHint(GL2ES1.GL_PERSPECTIVE_CORRECTION_HINT, GL.GL_NICEST);
-		//((Component) gLDrawable).addKeyListener(this);
-		
-		System.out.println("TestInit");
+		((Component) gLDrawable).addKeyListener(this);
+
 		try {
 			initShaders(gl);
 		} catch (IOException e) {
@@ -130,7 +134,7 @@ public class JOGL2GLSLExample extends Frame implements GLEventListener {
 				.getResourceAsStream("/demos/data/shaders/Vertex.glsl"));
 		gl.glShaderSource(v, 1, new String[] { vsrc }, (int[]) null, 0);
 		gl.glCompileShader(v);
-		
+
 		String fsrc = readFromStream(JOGL2GLSLExample.class
 				.getResourceAsStream("/demos/data/shaders/Fragment.glsl"));
 		gl.glShaderSource(f, 1, new String[] { fsrc }, (int[]) null, 0);
@@ -143,18 +147,18 @@ public class JOGL2GLSLExample extends Frame implements GLEventListener {
 		gl.glValidateProgram(shaderprogram);
 
 		gl.glUseProgram(shaderprogram);
-		
+
 		timeUniform = gl.glGetUniformLocation(shaderprogram, "time");
-		
+
 	}
 
 	@Override
 	public void display(GLAutoDrawable gLDrawable) {
 		final GL2 gl = gLDrawable.getGL().getGL2();
-		
+
 		gl.glClear(GL.GL_COLOR_BUFFER_BIT);
 		gl.glClear(GL.GL_DEPTH_BUFFER_BIT);
-		gl.glUniform1f(timeUniform, (float)Math.random());
+		gl.glUniform1f(timeUniform, (float) Math.random());
 		gl.glLoadIdentity();
 		gl.glTranslatef(0.0f, 0.0f, -5.0f);
 
@@ -175,11 +179,10 @@ public class JOGL2GLSLExample extends Frame implements GLEventListener {
 
 		// increasing rotation for the next iteration
 		rotateT += 0.2f;
-	
+
 		try {
 			Thread.sleep(100);
 		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
@@ -198,8 +201,32 @@ public class JOGL2GLSLExample extends Frame implements GLEventListener {
 		gl.glMatrixMode(GLMatrixFunc.GL_MODELVIEW);
 		gl.glLoadIdentity();
 	}
+
 	@Override
 	public void dispose(GLAutoDrawable drawable) {
 		// Hardly used.
+	}
+
+	@Override
+	public void keyTyped(KeyEvent e) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void keyPressed(KeyEvent e) {
+		if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
+			exit();
+		}
+	}
+
+	public void exit() {
+		System.exit(0);
+	}
+
+	@Override
+	public void keyReleased(KeyEvent e) {
+		// TODO Auto-generated method stub
+
 	}
 }
