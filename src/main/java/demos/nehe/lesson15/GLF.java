@@ -74,13 +74,16 @@ public class GLF {
 	/* if (fonts[i] == NULL) then this font is not present in memory */
 
 	private GLFFont[] fonts = new GLFFont[MAX_FONTS];
-	private int curfont; /* Index of current font pointer */
-	private int ap = GLF_CENTER; /* Anchor point */
+	// Index of current font pointer
+	private int curfont; 
+	// Anchor point
+	private int ap = GLF_CENTER; 
 	private boolean m_string_center; /* String centering (vector fonts) */
 	// private boolean m_bitmap_string_center; /* String centering (bitmap
 	// fonts) */
 
-	private int m_direction; /* String direction (vector fonts) */
+	// String direction (vector fonts)
+	private int m_direction; 
 
 	private char console_msg = GLF_NO;
 	private char texturing = GLF_NO;

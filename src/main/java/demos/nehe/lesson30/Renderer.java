@@ -27,20 +27,24 @@ class Renderer implements GLEventListener {
 	private boolean increaseCameraZ;
 	private boolean decreaseCameraZ;
 
-	private double timeStep = .6; // timestep of simulation
+	// timestep of simulation
+	private double timeStep = .6;
 	private boolean increaseTimeStep;
 	private boolean decreaseTimeStep;
 
-	private float cameraRotation = 0; // holds rotation around the Y axis
+	// holds rotation around the Y axis
+	private float cameraRotation = 0;
 	private boolean increaseCameraRotation;
 	private boolean decreaseCameraRotation;
 
-	private float[] spec = { 1.0f, 1.0f, 1.0f, 1.0f }; // sets specular
-														// highlight of balls
-	private float[] posl = { 0.0f, 400f, 0.0f, 1.0f }; // position of ligth
-														// source
-	private float[] amb2 = { 0.3f, 0.3f, 0.3f, 1.0f }; // ambient of lightsource
-	private float[] amb = { 0.2f, 0.2f, 0.2f, 1.0f }; // global ambient
+	// sets specular highlight of balls
+	private float[] spec = { 1.0f, 1.0f, 1.0f, 1.0f };
+	// position of light source
+	private float[] posl = { 0.0f, 400f, 0.0f, 1.0f };
+	// ambient of lightsource
+	private float[] amb2 = { 0.3f, 0.3f, 0.3f, 1.0f };
+	// global ambient
+	private float[] amb = { 0.2f, 0.2f, 0.2f, 1.0f };
 
 	private int dlist; // stores display list
 	private int[][] texture = new int[2][2];// stores texture objects
@@ -1025,6 +1029,6 @@ class Renderer implements GLEventListener {
 
 	public void dispose(GLAutoDrawable arg0) {
 		// TODO Auto-generated method stub
-		
+
 	}
 }

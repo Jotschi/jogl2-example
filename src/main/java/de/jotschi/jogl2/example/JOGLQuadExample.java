@@ -28,7 +28,7 @@ import demos.common.ClassPathLoader;
 /**
  * ported to JOGL 2.0 by Julien Gouesse (http://tuer.sourceforge.net)
  */
-public class JOGLQuad implements GLEventListener, KeyListener {
+public class JOGLQuadExample implements GLEventListener, KeyListener {
 
 	static {
 		ClassPathLoader loader = new ClassPathLoader();
@@ -124,7 +124,7 @@ public class JOGLQuad implements GLEventListener, KeyListener {
 			NoSuchFieldException, IllegalArgumentException,
 			IllegalAccessException {
 
-		canvas.addGLEventListener(new JOGLQuad());
+		canvas.addGLEventListener(new JOGLQuadExample());
 		frame.add(canvas);
 		frame.setSize(640, 480);
 		frame.setUndecorated(true);

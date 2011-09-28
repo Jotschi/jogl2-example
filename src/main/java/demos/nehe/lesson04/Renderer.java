@@ -31,11 +31,11 @@ class Renderer implements GLEventListener {
 
     public void display(GLAutoDrawable gLDrawable) {
         final GL2 gl = gLDrawable.getGL().getGL2();
-        gl.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT);
+        gl.glClear(GL2.GL_COLOR_BUFFER_BIT | GL2.GL_DEPTH_BUFFER_BIT);
         gl.glLoadIdentity();
         gl.glTranslatef(-1.5f, 0.0f, -6.0f);
         gl.glRotatef(rtri, 0.0f, 1.0f, 0.0f);
-        gl.glBegin(GL.GL_TRIANGLES);		    // Drawing Using Triangles
+        gl.glBegin(GL2.GL_TRIANGLES);		    // Drawing Using Triangles
         gl.glColor3f(1.0f, 0.0f, 0.0f);   // Set the current drawing color to red
         gl.glVertex3f(0.0f, 1.0f, 0.0f);	// Top
         gl.glColor3f(0.0f, 1.0f, 0.0f);   // Set the current drawing color to green

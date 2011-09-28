@@ -18,17 +18,17 @@ import demos.common.ResourceRetriever;
 
 class Renderer implements GLEventListener {
 	// Base Display List For The Font
-	private int base; 
+	private int base;
 	// Used For Scrolling The Screen
-	private int scroll; 
+	private int scroll;
 	// Scissor Width
-	private int swidth; 
+	private int swidth;
 	// Scissor Height
-	private int sheight; 
+	private int sheight;
 	// Keeps Track Of The Number Of Extensions Supported
-	private int maxtokens; 
+	private int maxtokens;
 	// Storage For One Texture
-	private TextureImage textures[] = new TextureImage[1]; 
+	private TextureImage textures[] = new TextureImage[1];
 
 	private ByteBuffer stringBuffer = GLBuffers.newDirectByteBuffer(256);
 
@@ -46,7 +46,7 @@ class Renderer implements GLEventListener {
 		textures[0] = new TextureImage();
 		try {
 			// Load The Font Texture
-			loadTGA(gl, textures[0], "demos/data/images/Font.tga"); 
+			loadTGA(gl, textures[0], "demos/data/images/Font.tga");
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
@@ -73,8 +73,8 @@ class Renderer implements GLEventListener {
 		glPrint(gl, 66, 80, 1, "Version"); // Display Version
 
 		gl.glColor3f(1.0f, 0.7f, 0.4f); // Set Color To Orange
-		glPrint(gl, 200, 16, 1, gl.glGetString(GL.GL_RENDERER)); // Display
-																	// Renderer
+		// Display Renderer
+		glPrint(gl, 200, 16, 1, gl.glGetString(GL.GL_RENDERER));
 		glPrint(gl, 200, 48, 1, gl.glGetString(GL.GL_VENDOR)); // Display Vendor
 																// Name
 		glPrint(gl, 200, 80, 1, gl.glGetString(GL.GL_VERSION)); // Display
@@ -123,13 +123,8 @@ class Renderer implements GLEventListener {
 																	// Extension
 																	// Number
 			gl.glColor3f(1.0f, 1.0f, 0.5f); // Set Color To Yellow
-			glPrint(gl, 50, 96 + (cnt * 32) - scroll, 0, tokenizer.nextToken()); // Print
-																					// The
-																					// Current
-																					// Token
-																					// (Parsed
-																					// Extension
-																					// Name)
+			// Print The Current Token (Parsed Extension Name)
+			glPrint(gl, 50, 96 + (cnt * 32) - scroll, 0, tokenizer.nextToken());
 		}
 		gl.glDisable(GL.GL_SCISSOR_TEST); // Disable Scissor Testing
 		gl.glFlush(); // Flush The Rendering Pipeline
@@ -144,12 +139,14 @@ class Renderer implements GLEventListener {
 		sheight = height; // Set Scissor Height To Window Height
 
 		gl.glViewport(0, 0, width, height);
-		gl.glMatrixMode(GLMatrixFunc.GL_PROJECTION); // Select The Projection Matrix
+		gl.glMatrixMode(GLMatrixFunc.GL_PROJECTION); // Select The Projection
+														// Matrix
 		gl.glLoadIdentity(); // Reset The Projection Matrix
 		gl.glOrtho(0.0f, 640, 480, 0.0f, -1.0f, 1.0f); // Create Ortho 640x480
 														// View (0,0 At Top
 														// Left)
-		gl.glMatrixMode(GLMatrixFunc.GL_MODELVIEW); // Select The Modelview Matrix
+		gl.glMatrixMode(GLMatrixFunc.GL_MODELVIEW); // Select The Modelview
+													// Matrix
 		gl.glLoadIdentity();
 	}
 
@@ -159,23 +156,25 @@ class Renderer implements GLEventListener {
 
 	/**
 	 * Loads a TGA file into memory
+	 * 
 	 * @param gl
 	 * @param texture
 	 * @param filename
 	 * @throws IOException
 	 */
 	private void loadTGA(GL gl, TextureImage texture, String filename)
-			throws IOException { 
+			throws IOException {
 		// Used To Compare TGA Header
-		ByteBuffer TGAcompare = GLBuffers.newDirectByteBuffer(12); 
+		ByteBuffer TGAcompare = GLBuffers.newDirectByteBuffer(12);
 		// Uncompressed TGA Header
-		byte[] TGAheader = new byte[] { 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0 }; 
+		byte[] TGAheader = new byte[] { 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 		ByteBuffer header = GLBuffers.newDirectByteBuffer(6); // First 6 Useful
 																// Bytes
 																// From The
 																// Header
 
-		int bytesPerPixel, // Holds Number Of Bytes Per Pixel Used In The TGA File
+		int bytesPerPixel, // Holds Number Of Bytes Per Pixel Used In The TGA
+							// File
 		imageSize, // Used To Store The Image Size When Setting Aside Ram
 		type = GL.GL_RGBA; // Set The Default GL Mode To RBGA (32 BPP)
 
@@ -307,7 +306,7 @@ class Renderer implements GLEventListener {
 	}
 
 	// Where the printing happens
-	private void glPrint(GL2 gl, int x, int y, int set, String fmt) { 
+	private void glPrint(GL2 gl, int x, int y, int set, String fmt) {
 
 		// If There's No Text
 		if (fmt == null) {
@@ -334,7 +333,7 @@ class Renderer implements GLEventListener {
 		stringBuffer.put(fmt.getBytes());
 		stringBuffer.flip();
 		// Write the text to the screen
-		gl.glCallLists(fmt.length(), GL.GL_UNSIGNED_BYTE, stringBuffer); 
+		gl.glCallLists(fmt.length(), GL.GL_UNSIGNED_BYTE, stringBuffer);
 		gl.glDisable(GL.GL_TEXTURE_2D); // Disable Texture Mapping
 	}
 

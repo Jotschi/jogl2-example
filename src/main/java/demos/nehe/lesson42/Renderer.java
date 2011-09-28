@@ -113,8 +113,10 @@ class Renderer implements GLEventListener {
 		reset(); // Call Reset To Build Our Initial Texture, Etc.
 
 		// Start Of User Initialization
-		gl.glTexParameteri(GL2.GL_TEXTURE_2D, GL2.GL_TEXTURE_WRAP_S, GL2.GL_CLAMP);
-		gl.glTexParameteri(GL2.GL_TEXTURE_2D, GL2.GL_TEXTURE_WRAP_T, GL2.GL_CLAMP);
+		gl.glTexParameteri(GL2.GL_TEXTURE_2D, GL2.GL_TEXTURE_WRAP_S,
+				GL2.GL_CLAMP);
+		gl.glTexParameteri(GL2.GL_TEXTURE_2D, GL2.GL_TEXTURE_WRAP_T,
+				GL2.GL_CLAMP);
 		gl.glTexParameterf(GL2.GL_TEXTURE_2D, GL2.GL_TEXTURE_MAG_FILTER,
 				GL2.GL_LINEAR);
 		gl.glTexParameteri(GL2.GL_TEXTURE_2D, GL2.GL_TEXTURE_MIN_FILTER,
@@ -160,14 +162,8 @@ class Renderer implements GLEventListener {
 			do // If We Are Trapped
 			{
 				setRandomMazePosition();
-			} while (tex_data.get(((mx + (MAZE_WIDTH * my)) * 3)) == 0); // Keep
-																			// Picking
-																			// A
-																			// Random
-																			// Position
-																			// Until
-																			// We
-																			// Find
+				// Keep Picking A Random Position Until We Find
+			} while (tex_data.get(((mx + (MAZE_WIDTH * my)) * 3)) == 0);
 		} // One That Has Already Been Tagged (Safe Starting Point)
 
 		dir = (int) Math.round(Math.random() * 3f);
@@ -176,19 +172,8 @@ class Renderer implements GLEventListener {
 													// (Right) And We Are Not At
 													// The Far Right
 		{
-			if (tex_data.get((((mx + 2) + (MAZE_WIDTH * my)) * 3)) == 0) // And
-																			// If
-																			// The
-																			// Room
-																			// To
-																			// The
-																			// Right
-																			// Has
-																			// Not
-																			// Already
-																			// Been
-																			// Visited
-			{
+			// And If The Room To The Right Has Not Already Been Visited
+			if (tex_data.get((((mx + 2) + (MAZE_WIDTH * my)) * 3)) == 0) {
 				updateTex(mx + 1, my); // Update The Texture To Show Path Cut
 										// Out Between Rooms
 				mx += 2; // Move To The Right (Room To The Right)
@@ -219,19 +204,8 @@ class Renderer implements GLEventListener {
 		if ((dir == 2) && (mx >= 2)) // If The Direction Is 2 (Left) And We Are
 										// Not At The Far Left
 		{
-			if (tex_data.get((((mx - 2) + (MAZE_WIDTH * my)) * 3)) == 0) // And
-																			// If
-																			// The
-																			// Room
-																			// To
-																			// The
-																			// Left
-																			// Has
-																			// Not
-																			// Already
-																			// Been
-																			// Visited
-			{
+			// And If The Room To The Left Has Not Already Been Visited
+			if (tex_data.get((((mx - 2) + (MAZE_WIDTH * my)) * 3)) == 0) {
 				updateTex(mx - 1, my); // Update The Texture To Show Path Cut
 										// Out Between Rooms
 				mx -= 2; // Move To The Left (Room To The Left)
@@ -241,17 +215,8 @@ class Renderer implements GLEventListener {
 		if ((dir == 3) && (my >= 2)) // If The Direction Is 3 (Up) And We Are
 										// Not At The Top
 		{
-			if (tex_data.get(((mx + (MAZE_WIDTH * (my - 2))) * 3)) == 0) // And
-																			// If
-																			// The
-																			// Room
-																			// Above
-																			// Has
-																			// Not
-																			// Already
-																			// Been
-																			// Visited
-			{
+			// And If The Room Above Has Not Already Been Visited
+			if (tex_data.get(((mx + (MAZE_WIDTH * (my - 2))) * 3)) == 0) {
 				updateTex(mx, my - 1); // Update The Texture To Show Path Cut
 										// Out Between Rooms
 				my -= 2; // Move Up (Room Above)
@@ -294,8 +259,9 @@ class Renderer implements GLEventListener {
 				// Screen Width And Height
 				gl.glViewport(0, windowHeight / 2, windowWidth / 2,
 						windowHeight / 2);
-				gl.glMatrixMode(GLMatrixFunc.GL_PROJECTION); // Select The Projection
-													// Matrix
+				gl.glMatrixMode(GLMatrixFunc.GL_PROJECTION); // Select The
+																// Projection
+				// Matrix
 				gl.glLoadIdentity(); // Reset The Projection Matrix
 				// Set Up Ortho Mode To Fit 1/4 The Screen (Size Of A Viewport)
 				glu.gluOrtho2D(0, windowWidth / 2, windowHeight / 2, 0);
@@ -307,8 +273,9 @@ class Renderer implements GLEventListener {
 				// Screen Width And Height
 				gl.glViewport(windowWidth / 2, windowHeight / 2,
 						windowWidth / 2, windowHeight / 2);
-				gl.glMatrixMode(GLMatrixFunc.GL_PROJECTION); // Select The Projection
-													// Matrix
+				gl.glMatrixMode(GLMatrixFunc.GL_PROJECTION); // Select The
+																// Projection
+				// Matrix
 				gl.glLoadIdentity(); // Reset The Projection Matrix
 				// Set Up Perspective Mode To Fit 1/4 The Screen (Size Of A
 				// Viewport)
@@ -322,8 +289,9 @@ class Renderer implements GLEventListener {
 				// The Screen Width And Height
 				gl.glViewport(windowWidth / 2, 0, windowWidth / 2,
 						windowHeight / 2);
-				gl.glMatrixMode(GLMatrixFunc.GL_PROJECTION); // Select The Projection
-													// Matrix
+				gl.glMatrixMode(GLMatrixFunc.GL_PROJECTION); // Select The
+																// Projection
+				// Matrix
 				gl.glLoadIdentity(); // Reset The Projection Matrix
 				// Set Up Perspective Mode To Fit 1/4 The Screen (Size Of A
 				// Viewport)
@@ -367,27 +335,30 @@ class Renderer implements GLEventListener {
 				gl.glEnd(); // Done Drawing The Textured Quad
 			}
 
-			if (loop == 1) // Are We Drawing The Second Image? (3D Texture
-							// Mapped Sphere... Perspective)
-			{
-				gl.glTranslatef(0.0f, 0.0f, -14.0f); // Move 14 Units Into The
-														// Screen
+			// Are We Drawing The Second Image? (3D Texture Mapped Sphere...
+			// Perspective)
+			if (loop == 1) {
+				// Move 14 Units Into The Screen
+				gl.glTranslatef(0.0f, 0.0f, -14.0f);
 
-				gl.glRotatef(xrot, 1.0f, 0.0f, 0.0f); // Rotate By xrot On The
-														// X-Axis
-				gl.glRotatef(yrot, 0.0f, 1.0f, 0.0f); // Rotate By yrot On The
-														// Y-Axis
-				gl.glRotatef(zrot, 0.0f, 0.0f, 1.0f); // Rotate By zrot On The
-														// Z-Axis
+				// Rotate By xrot On The X-Axis
+				gl.glRotatef(xrot, 1.0f, 0.0f, 0.0f);
+				// Rotate By yrot On The Y-Axis
+				gl.glRotatef(yrot, 0.0f, 1.0f, 0.0f);
+				// Rotate By zrot On The Z-Axis
+				gl.glRotatef(zrot, 0.0f, 0.0f, 1.0f);
 
-				gl.glEnable(GL2.GL_LIGHTING); // Enable Lighting
-				glu.gluSphere(quadric, 4.0f, 32, 32); // Draw A Sphere
-				gl.glDisable(GL2.GL_LIGHTING); // Disable Lighting
+				// Enable Lighting
+				gl.glEnable(GL2.GL_LIGHTING);
+				// Draw A Sphere
+				glu.gluSphere(quadric, 4.0f, 32, 32);
+				// Disable Lighting
+				gl.glDisable(GL2.GL_LIGHTING);
 			}
 
-			if (loop == 2) // Are We Drawing The Third Image? (Texture At An
-							// Angl.gle... Perspective)
-			{
+			// Are We Drawing The Third Image? (Texture At An Angl.gle...
+			// Perspective)
+			if (loop == 2) {
 				gl.glTranslatef(0.0f, 0.0f, -2.0f); // Move 2 Units Into The
 													// Screen
 				gl.glRotatef(-45.0f, 1.0f, 0.0f, 0.0f); // Tilt The Quad Below
@@ -455,6 +426,6 @@ class Renderer implements GLEventListener {
 
 	public void dispose(GLAutoDrawable arg0) {
 		// TODO Auto-generated method stub
-		
+
 	}
 }

@@ -7,25 +7,30 @@ import javax.media.opengl.GL2;
 import javax.media.opengl.GLAutoDrawable;
 import javax.media.opengl.GLEventListener;
 import javax.media.opengl.fixedfunc.GLMatrixFunc;
-import javax.media.opengl.glu.GLU;
 import javax.media.opengl.glu.gl2.GLUgl2;
 
 import demos.common.TextureReader;
 
 class Renderer implements GLEventListener {
-	private boolean light; // Lighting ON/OFF
+	// Lighting ON/OFF
+	private boolean light; 
 
-	private float xrot; // X Rotation
-	private float yrot; // Y Rotation
-	private float xspeed; // X Rotation Speed
+	// X Rotation
+	private float xrot; 
+	// Y Rotation
+	private float yrot; 
+	// X Rotation Speed
+	private float xspeed; 
 	private boolean rotateFasterX;
 	private boolean rotateSlowerX;
 
-	private float yspeed; // Y Rotation Speed
+	// Y Rotation Speed
+	private float yspeed; 
 	private boolean rotateFasterY;
 	private boolean rotateSlowerY;
 
-	private float z = -5.0f; // Depth Into The Screen
+	// Depth Into The Screen
+	private float z = -5.0f; 
 	private boolean zoomIn;
 	private boolean zoomOut;
 
@@ -33,11 +38,13 @@ class Renderer implements GLEventListener {
 	private float[] LightDiffuse = { 1.0f, 1.0f, 1.0f, 1.0f };
 	private float[] LightPosition = { 0.0f, 0.0f, 2.0f, 1.0f };
 
-	private int filter; // Which Filter To Use ( new )
+	// Which Filter To Use ( new )
+	private int filter; 
 
 	// Storage For Three Types Of Fog ( new )
-	private int fogMode[] = { GL2.GL_EXP, GL2.GL_EXP2, GL.GL_LINEAR }; 
-	private int fogfilter = 0; // Which Fog Mode To Use ( new )
+	private int fogMode[] = { GL2.GL_EXP, GL2.GL_EXP2, GL.GL_LINEAR };
+	// Which Fog Mode To Use ( new )
+	private int fogfilter = 0; 
 	private float fogColor[] = { 0.5f, 0.5f, 0.5f, 1.0f }; // Fog Color ( new )
 
 	private int[] textures = new int[3]; // Storage For 3 Textures

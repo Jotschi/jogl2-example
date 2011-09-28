@@ -90,7 +90,8 @@ class Renderer implements GLEventListener {
 			int src_ystart, int src_width, int src_height, int dst_xstart,
 			int dst_ystart, boolean blend, int alpha) {
 		int i, j, k;
-		int s, d; // Source & Destination
+		// Source & Destination
+		int s, d;
 
 		// Clamp Alpha If Value Is Out Of Range
 		if (alpha > 255)
@@ -105,42 +106,34 @@ class Renderer implements GLEventListener {
 													// Width In Pixels * Bytes
 													// Per Pixel)
 
-		for (i = 0; i < src_height; i++) // Height Loop
-		{
+		// Height Loop
+		for (i = 0; i < src_height; i++) {
 			s = s + (src_xstart * src.format); // Move Through Src Data By Bytes
 												// Per Pixel
 			d = d + (dst_xstart * dst.format); // Move Through Dst Data By Bytes
 												// Per Pixel
-			for (j = 0; j < src_width; j++) // Width Loop
-			{
-				for (k = 0; k < src.format; k++, d++, s++) // "n" Bytes At A
-															// Time
-				{
-					if (blend) // If Blending Is On
+			// Width Loop
+			for (j = 0; j < src_width; j++) {
+				// "n" Bytes At A Time
+				for (k = 0; k < src.format; k++, d++, s++) {
+					// If Blending Is On
+					if (blend) {
+						// Multiply src Data*alpha Add Dst Data*(255-alpha)
 						dst.data.put(d,
 								(byte) (((src.data.get(s) * alpha) + (dst.data
-										.get(d) * (255 - alpha))) >> 8)); // Multiply
-																			// Src
-																			// Data*alpha
-																			// Add
-																			// Dst
-																			// Data*(255-alpha)
-					else
+										.get(d) * (255 - alpha))) >> 8));
+					} else {
 						// Keep in 0-255 Range With >> 8
-						dst.data.put(d, src.data.get(s)); // No Blending Just Do
-															// A Straight Copy
+						// No Blending Just Do A Straight Copy
+						dst.data.put(d, src.data.get(s));
+					}
 				}
 			}
-			d = d + (dst.width - (src_width + dst_xstart)) * dst.format; // Add
-																			// End
-																			// Of
-																			// Row
-																			// */
-			s = s + (src.width - (src_width + src_xstart)) * src.format; // Add
-																			// End
-																			// Of
-																			// Row
-																			// */
+			// Add End Of Row
+			d = d + (dst.width - (src_width + dst_xstart)) * dst.format;
+			// Add End Of Row
+			s = s + (src.width - (src_width + src_xstart)) * src.format;
+
 		}
 	}
 
