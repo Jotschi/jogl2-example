@@ -27,7 +27,7 @@ import com.jogamp.opengl.util.FPSAnimator;
 import demos.common.ClassPathLoader;
 
 /*
- * JOGL 2.0 Program Template For AWT applications
+ * Simple JOGL 2 - GLSL Example
  */
 @SuppressWarnings("serial")
 public class JOGL2GLSLExample extends Frame implements GLEventListener {
@@ -76,7 +76,7 @@ public class JOGL2GLSLExample extends Frame implements GLEventListener {
 		});
 		add(canvas);
 		pack();
-		setTitle("OpenGL 2 Test");
+		setTitle("OpenGL 2 GLSL Test");
 		setVisible(true);
 		animator.start(); // Start the animator
 	}
@@ -101,7 +101,6 @@ public class JOGL2GLSLExample extends Frame implements GLEventListener {
 		try {
 			initShaders(gl);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
