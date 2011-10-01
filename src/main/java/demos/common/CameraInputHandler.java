@@ -5,24 +5,31 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 
+import javax.media.j3d.Transform3D;
 import javax.swing.SwingUtilities;
 import javax.swing.event.MouseInputAdapter;
 import javax.vecmath.Matrix4f;
-import javax.vecmath.Quat4f;
 import javax.vecmath.Vector3f;
 
-public class ArcBallInputHandler extends MouseInputAdapter implements
+/**
+ * InputHandler for camera movements
+ * @author jotschi
+ *
+ */
+public class CameraInputHandler extends MouseInputAdapter implements
 		KeyListener {
 
 	private Vector3f position = new Vector3f();
 	public Matrix4f translation = new Matrix4f();
-	public Matrix4f lastRotation = new Matrix4f();
-	public Matrix4f thisRotation = new Matrix4f();
+	public Matrix4f rotation = new Matrix4f();
+	
+	public Matrix4f viewMatrix = new Matrix4f();
+
 	public final Object matrixLock = new Object();
 
-	public ArcBall arcBall = new ArcBall(640.0f, 480.0f);
+	
 
-	public ArcBallInputHandler(GLDisplay glDisplay) {
+	public CameraInputHandler(GLDisplay glDisplay) {
 
 		glDisplay.registerMouseEventForHelp(MouseEvent.MOUSE_CLICKED,
 				MouseEvent.BUTTON1_DOWN_MASK, "Toggle display mode");
@@ -30,9 +37,11 @@ public class ArcBallInputHandler extends MouseInputAdapter implements
 		glDisplay.addMouseListener(this);
 		glDisplay.addMouseMotionListener(this);
 		glDisplay.addKeyListener(this);
-
-		lastRotation.setIdentity();
-		thisRotation.setIdentity();
+		
+		rotation.setIdentity();
+		translation.setIdentity();
+		viewMatrix.setIdentity();
+	
 	}
 
 	public void mouseClicked(MouseEvent e) {
@@ -58,18 +67,18 @@ public class ArcBallInputHandler extends MouseInputAdapter implements
 	 */
 	void reset() {
 		synchronized (matrixLock) {
-			lastRotation.setIdentity();
-			thisRotation.setIdentity();
+			rotation.setIdentity();
+			translation.setIdentity();
+			viewMatrix.setIdentity();
 		}
 	}
 
 	void startDrag(Point MousePt) {
-		// Set Last Static Rotation To Last Dynamic One
-		synchronized (matrixLock) {
-			lastRotation.set(thisRotation);
-		}
-		// Update Start Vector And Prepare For Dragging
-		arcBall.click(MousePt);
+	
+//		synchronized (matrixLock) {
+//			lastRotation.set(thisRotation);
+//		}
+
 	}
 
 	/**
@@ -78,15 +87,19 @@ public class ArcBallInputHandler extends MouseInputAdapter implements
 	 * @param MousePt
 	 */
 	void drag(Point MousePt) {
-		Quat4f thisQuat = new Quat4f();
-		// Update End Vector And Get Rotation As Quaternion
-		arcBall.drag(MousePt, thisQuat);
+
 		synchronized (matrixLock) {
 			// Convert quaternion into Matrix3fT
-			thisRotation.setRotation(thisQuat);
+			//thisRotation.setRotation(thisQuat);
 			// Accumulate last rotation into this one
-			thisRotation.mul(thisRotation, lastRotation);
+			//thisRotation.mul(thisRotation, lastRotation);
 		}
+	}
+	
+	public void updateViewMatrix() {
+		this.viewMatrix.mul(translation, rotation);
+		Transform3D lookAt = new Transform3D();
+
 	}
 
 	@Override
