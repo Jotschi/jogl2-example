@@ -12,11 +12,12 @@ import javax.media.opengl.glu.GLUquadric;
 
 class Renderer implements GLEventListener {
 	// User Defined Variables
-	private GLUquadric quadratic; // Used For Our Quadric
+	// Used For Our Quadric
+	private GLUquadric quadratic;
 	private GLU glu = new GLU();
 
-	private Matrix4f LastRot = new Matrix4f();
-	private Matrix4f ThisRot = new Matrix4f();
+	private Matrix4f lastRot = new Matrix4f();
+	private Matrix4f thisRot = new Matrix4f();
 	private final Object matrixLock = new Object();
 	private float[] matrix = new float[16];
 
@@ -27,25 +28,25 @@ class Renderer implements GLEventListener {
 			int height) {
 		GL2 gl = drawable.getGL().getGL2();
 
-		gl.glViewport(0, 0, width, height); // Reset The Current Viewport
-		gl.glMatrixMode(GLMatrixFunc.GL_PROJECTION); // Select The Projection
-														// Matrix
-		gl.glLoadIdentity(); // Reset The Projection Matrix
-		glu.gluPerspective(45.0f, (float) (width) / (float) (height), // Calculate
-																		// The
-																		// Aspect
-																		// Ratio
-																		// Of
-																		// The
-																		// Window
-				1.0f, 100.0f);
-		gl.glMatrixMode(GLMatrixFunc.GL_MODELVIEW); // Select The Modelview
-													// Matrix
-		gl.glLoadIdentity(); // Reset The Modelview Matrix
+		// Reset The Current Viewport
+		gl.glViewport(0, 0, width, height);
 
-		arcBall.setBounds((float) width, (float) height); // *NEW* Update mouse
-															// bounds for
-															// arcball
+		// Select The Projection Matrix
+		gl.glMatrixMode(GLMatrixFunc.GL_PROJECTION);
+
+		// Reset The Projection Matrix
+		gl.glLoadIdentity();
+
+		// Calculate The Aspect Ratio Of The Window
+		glu.gluPerspective(45.0f, (float) (width) / (float) (height), 1.0f,
+				100.0f);
+		// Select The Modelview Matrix
+		gl.glMatrixMode(GLMatrixFunc.GL_MODELVIEW);
+		// Reset The Modelview Matrix
+		gl.glLoadIdentity();
+
+		// Update mouse bounds for arcball
+		arcBall.setBounds((float) width, (float) height);
 	}
 
 	public void displayChanged(GLAutoDrawable drawable, boolean modeChanged,
@@ -57,17 +58,17 @@ class Renderer implements GLEventListener {
 		GL2 gl = drawable.getGL().getGL2();
 
 		// Start Of User Initialization
-		LastRot.setIdentity(); // Reset Rotation
-		ThisRot.setIdentity(); // Reset Rotation
-		ThisRot.get(matrix);
+		lastRot.setIdentity(); // Reset Rotation
+		thisRot.setIdentity(); // Reset Rotation
+		thisRot.get(matrix);
 
 		gl.glClearColor(0.0f, 0.0f, 0.0f, 0.5f); // Black Background
 		gl.glClearDepth(1.0f); // Depth Buffer Setup
 		gl.glDepthFunc(GL.GL_LEQUAL); // The Type Of Depth Testing (Less Or
 										// Equal)
 		gl.glEnable(GL.GL_DEPTH_TEST); // Enable Depth Testing
-		gl.glShadeModel(GL2.GL_FLAT); // Select Flat Shading (Nice Definition Of
-										// Objects)
+		gl.glShadeModel(GL2.GL_FLAT); // Select Flat Shading (Nice definition of
+										// objects)
 
 		// Set perspective calculations to most accurate
 		gl.glHint(GL2.GL_PERSPECTIVE_CORRECTION_HINT, GL.GL_NICEST);
@@ -84,38 +85,51 @@ class Renderer implements GLEventListener {
 		gl.glEnable(GL2.GL_COLOR_MATERIAL); // Enable Color Material
 	}
 
+	/**
+	 * Resets the rotation matrices
+	 */
 	void reset() {
 		synchronized (matrixLock) {
-			LastRot.setIdentity(); // Reset Rotation
-			ThisRot.setIdentity(); // Reset Rotation
+			lastRot.setIdentity();
+			thisRot.setIdentity();
 		}
 	}
 
 	void startDrag(Point MousePt) {
+		// Set Last Static Rotation To Last Dynamic One
 		synchronized (matrixLock) {
-			LastRot.set(ThisRot); // Set Last Static Rotation To Last Dynamic
-									// One
+			lastRot.set(thisRot);
 		}
-		arcBall.click(MousePt); // Update Start Vector And Prepare For Dragging
+		// Update Start Vector And Prepare For Dragging
+		arcBall.click(MousePt);
 	}
 
-	void drag(Point MousePt) // Perform Motion Updates Here
-	{
+	/**
+	 * Perform Motion Updates Here
+	 * 
+	 * @param MousePt
+	 */
+	void drag(Point MousePt) {
 		Quat4f ThisQuat = new Quat4f();
 
-		arcBall.drag(MousePt, ThisQuat); // Update End Vector And Get Rotation
-											// As Quaternion
+		// Update End Vector And Get Rotation As Quaternion
+		arcBall.drag(MousePt, ThisQuat);
 		synchronized (matrixLock) {
-			ThisRot.setRotation(ThisQuat); // Convert Quaternion Into Matrix3fT
-			ThisRot.mul(ThisRot, LastRot); // Accumulate Last Rotation Into This
-											// One
+			// Convert quaternion into Matrix3fT
+			thisRot.setRotation(ThisQuat);
+			// Accumulate last rotation into this one
+			thisRot.mul(thisRot, lastRot);
 		}
 	}
 
-	void torus(GL2 gl, float MinorRadius, float MajorRadius) // Draw A Torus
-																// With
-																// Normals
-	{
+	/**
+	 * Draw A Torus With Normals
+	 * 
+	 * @param gl
+	 * @param MinorRadius
+	 * @param MajorRadius
+	 */
+	void torus(GL2 gl, float MinorRadius, float MajorRadius) {
 		int i, j;
 		gl.glBegin(GL.GL_TRIANGLE_STRIP); // Start A Triangle Strip
 		for (i = 0; i < 20; i++) // Stacks
@@ -164,27 +178,31 @@ class Renderer implements GLEventListener {
 								* r);
 			}
 		}
-		gl.glEnd(); // Done Torus
+		gl.glEnd();
 	}
 
 	public void display(GLAutoDrawable drawable) {
 		synchronized (matrixLock) {
-			ThisRot.get(matrix);
+			thisRot.get(matrix);
 		}
 
 		GL2 gl = drawable.getGL().getGL2();
 
 		// Clear screen and depth buffer
 		gl.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT);
-		gl.glLoadIdentity(); // Reset The Current Modelview Matrix
-		gl.glTranslatef(-1.5f, 0.0f, -6.0f); // Move Left 1.5 Units And Into The
-												// Screen 6.0
+		// Reset The Current Modelview Matrix
+		gl.glLoadIdentity();
+		// Move Left 1.5 Units And Into The Screen 6.0
+		gl.glTranslatef(-1.5f, 0.0f, -6.0f);
 
-		gl.glPushMatrix(); // NEW: Prepare Dynamic Transform
-		gl.glMultMatrixf(matrix, 0); // NEW: Apply Dynamic Transform
+		// Prepare Dynamic Transform
+		gl.glPushMatrix();
+		// Apply Dynamic Transform
+		gl.glMultMatrixf(matrix, 0);
 		gl.glColor3f(0.75f, 0.75f, 1.0f);
 		torus(gl, 0.30f, 1.00f);
-		gl.glPopMatrix(); // NEW: Unapply Dynamic Transform
+		// Unapply Dynamic Transform
+		gl.glPopMatrix();
 
 		gl.glLoadIdentity(); // Reset The Current Modelview Matrix
 		gl.glTranslatef(1.5f, 0.0f, -6.0f); // Move Right 1.5 Units And Into The

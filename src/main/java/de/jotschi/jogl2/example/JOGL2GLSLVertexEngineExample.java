@@ -8,6 +8,8 @@ import java.awt.event.KeyListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.IOException;
+import java.io.InputStream;
+import java.util.Scanner;
 
 import javax.media.opengl.GL;
 import javax.media.opengl.GL2;
@@ -24,16 +26,18 @@ import javax.media.opengl.glu.GLU;
 import com.jogamp.common.jvm.JNILibLoaderBase;
 import com.jogamp.gluegen.runtime.NativeLibLoader;
 import com.jogamp.opengl.util.FPSAnimator;
+import com.jogamp.opengl.util.texture.Texture;
+import com.jogamp.opengl.util.texture.TextureData;
+import com.jogamp.opengl.util.texture.TextureIO;
 
 import demos.common.ClassPathLoader;
-import demos.common.ResourceRetriever;
 
 /*
  * Simple JOGL 2 - GLSL Example
  */
 @SuppressWarnings("serial")
-public class JOGL2GLSLExample extends Frame implements GLEventListener,
-		KeyListener {
+public class JOGL2GLSLVertexEngineExample extends Frame implements
+		GLEventListener, KeyListener {
 	private static final int CANVAS_WIDTH = 640; // Width of the drawable
 	private static final int CANVAS_HEIGHT = 480; // Height of the drawable
 	private static final int FPS = 60; // Animator's target frames per second
@@ -50,7 +54,7 @@ public class JOGL2GLSLExample extends Frame implements GLEventListener,
 
 	// Constructor to create profile, caps, drawable, animator, and initialize
 	// Frame
-	public JOGL2GLSLExample() {
+	public JOGL2GLSLVertexEngineExample() {
 		// Get the default OpenGL profile that best reflect your running
 		// platform.
 		GLProfile glp = GLProfile.getDefault();
@@ -86,7 +90,7 @@ public class JOGL2GLSLExample extends Frame implements GLEventListener,
 	}
 
 	public static void main(String[] args) {
-		new JOGL2GLSLExample();
+		new JOGL2GLSLVertexEngineExample();
 	}
 
 	@Override
@@ -108,19 +112,34 @@ public class JOGL2GLSLExample extends Frame implements GLEventListener,
 		}
 	}
 
+	public static String readFromStream(InputStream ins) throws IOException {
+		if (ins == null) {
+			throw new IOException("Could not read from stream.");
+		}
+		StringBuffer buffer = new StringBuffer();
+		Scanner scanner = new Scanner(ins);
+		try {
+			while (scanner.hasNextLine()) {
+				buffer.append(scanner.nextLine() + "\n");
+			}
+		} finally {
+			scanner.close();
+		}
 
+		return buffer.toString();
+	}
 
 	public void initShaders(GL2 gl) throws IOException {
 		int v = gl.glCreateShader(GL2.GL_VERTEX_SHADER);
 		int f = gl.glCreateShader(GL2.GL_FRAGMENT_SHADER);
 
-		String vsrc = ResourceRetriever.readFromStream(JOGL2GLSLExample.class
-				.getResourceAsStream("/demos/data/shaders/Vertex.glsl"));
+		String vsrc = readFromStream(JOGL2GLSLVertexEngineExample.class
+				.getResourceAsStream("/demos/data/shaders/VertexFullscreen.glsl"));
 		gl.glShaderSource(v, 1, new String[] { vsrc }, (int[]) null, 0);
 		gl.glCompileShader(v);
 
-		String fsrc = ResourceRetriever.readFromStream(JOGL2GLSLExample.class
-				.getResourceAsStream("/demos/data/shaders/Fragment.glsl"));
+		String fsrc = readFromStream(JOGL2GLSLVertexEngineExample.class
+				.getResourceAsStream("/demos/data/shaders/FragmentVoxel.glsl"));
 		gl.glShaderSource(f, 1, new String[] { fsrc }, (int[]) null, 0);
 		gl.glCompileShader(f);
 
@@ -134,22 +153,27 @@ public class JOGL2GLSLExample extends Frame implements GLEventListener,
 
 		timeUniform = gl.glGetUniformLocation(shaderprogram, "time");
 
+		InputStream stream = getClass().getResourceAsStream(
+				"/demos/data/images/map.jpg");
+		if (stream == null) {
+			throw new IOException("texture not found");
+		}
+		TextureData data = TextureIO.newTextureData(gl.getGLProfile(), stream,
+				false, "jpg");
+		Texture texture = TextureIO.newTexture(data);
+		texture.enable(gl);
+		texture.bind(gl);
+
+		int textureUniform = gl.glGetUniformLocation(shaderprogram, "texture");
+		gl.glUniform1i(textureUniform, texture.getTarget());
+
 	}
 
 	@Override
 	public void display(GLAutoDrawable gLDrawable) {
 		final GL2 gl = gLDrawable.getGL().getGL2();
 
-		gl.glClear(GL.GL_COLOR_BUFFER_BIT);
-		gl.glClear(GL.GL_DEPTH_BUFFER_BIT);
 		gl.glUniform1f(timeUniform, (float) Math.random());
-		gl.glLoadIdentity();
-		gl.glTranslatef(0.0f, 0.0f, -5.0f);
-
-		// rotate on the three axis
-		gl.glRotatef(rotateT, 1.0f, 0.0f, 0.0f);
-		gl.glRotatef(rotateT, 0.0f, 1.0f, 0.0f);
-		gl.glRotatef(rotateT, 0.0f, 0.0f, 1.0f);
 
 		// Draw A Quad
 		gl.glBegin(GL2.GL_QUADS);
@@ -158,11 +182,7 @@ public class JOGL2GLSLExample extends Frame implements GLEventListener,
 		gl.glVertex3f(1.0f, 1.0f, 0.0f); // Top Right
 		gl.glVertex3f(1.0f, -1.0f, 0.0f); // Bottom Right
 		gl.glVertex3f(-1.0f, -1.0f, 0.0f); // Bottom Left
-		// Done Drawing The Quad
 		gl.glEnd();
-
-		// increasing rotation for the next iteration
-		rotateT += 0.2f;
 
 		try {
 			Thread.sleep(100);

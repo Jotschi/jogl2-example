@@ -96,13 +96,12 @@ class Renderer implements GLEventListener {
 		// Create Our Mesh
 		for (int x = 0; x < SIZE; x++) {
 			for (int z = 0; z < SIZE; z++) {
-				mesh[x][z][0] = (float) (SIZE / 2) - x; // We Want To Center Our
-														// Mesh Around The
-														// Origin
-				mesh[x][z][1] = 0.0f; // Set The Y Values For All Points To 0
-				mesh[x][z][2] = (float) (SIZE / 2) - z; // We Want To Center Our
-														// Mesh Around The
-														// Origin
+				 // We Want To Center Our Mesh Around The Origin
+				mesh[x][z][0] = (float) (SIZE / 2) - x;
+				// Set The Y Values For All Points To 0
+				mesh[x][z][1] = 0.0f; 
+				// We Want To Center Our Mesh Around The Origin
+				mesh[x][z][2] = (float) (SIZE / 2) - z; 
 			}
 		}
 

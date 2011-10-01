@@ -1,24 +1,5 @@
 package demos.nehe.lesson12;
 
-/*--.          .-"-.
-                 /   o_O        / O o \
-                 \_  (__\       \_ v _/
-                 //   \\        //   \\
-                ((     ))      ((     ))
- ��������������--""---""--����--""---""--��������������������������
- �                 |||            |||                             �
- �                  |              |                              �
- �                                                                �
- � Programmer:Abdul Bezrati                                       �
- � Program   :Nehe's 12th lesson port to JOGL                     �
- � Comments  :None                                                �
- �    _______                                                     �
- �  /` _____ `\;,    abezrati@hotmail.com                         �
- � (__(^===^)__)';,                                 ___           �
- �   /  :::  \   ,;                               /^   ^\         �
- �  |   :::   | ,;'                              ( �   � )        �
- ���'._______.'`��������������������������� --�oOo--(_)--oOo�--��*/
-
 import demos.common.GLDisplay;
 import demos.common.LessonNativeLoader;
 

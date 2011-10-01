@@ -28,7 +28,7 @@ class Renderer implements GLEventListener {
 	}
 
 	public void loadGLTextures(GL gl) throws IOException {
-		String tileNames[] = { "demos/data/images/font.png",
+		String tileNames[] = { "demos/data/images/Font.png",
 				"demos/data/images/bumps.png" };
 
 		gl.glGenTextures(2, textures, 0);

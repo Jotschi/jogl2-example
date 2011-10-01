@@ -344,11 +344,11 @@ class Renderer implements GLEventListener {
 		int height; // Image Height
 		int texID[] = new int[1]; // Texture ID Used To Select A Texture
 
-		public void printInfo() {
-			System.out.println("Byte per Pixel: " + bpp + "\n"
-					+ "Image Width: " + width + "\n" + "Image Height:" + height
-					+ "\n");
-		}
+//		public void printInfo() {
+//			System.out.println("Byte per Pixel: " + bpp + "\n"
+//					+ "Image Width: " + width + "\n" + "Image Height:" + height
+//					+ "\n");
+//		}
 	}
 
 	public void dispose(GLAutoDrawable arg0) {
