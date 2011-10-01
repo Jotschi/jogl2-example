@@ -1,7 +1,5 @@
 package demos.nehe.lesson48;
 
-import java.awt.Point;
-
 import javax.media.opengl.GL;
 import javax.media.opengl.GL2;
 import javax.media.opengl.GLAutoDrawable;
@@ -10,7 +8,8 @@ import javax.media.opengl.fixedfunc.GLMatrixFunc;
 import javax.media.opengl.glu.GLU;
 import javax.media.opengl.glu.GLUquadric;
 import javax.vecmath.Matrix4f;
-import javax.vecmath.Quat4f;
+
+import demos.common.ArcBallInputHandler;
 
 class Renderer implements GLEventListener {
 	// User Defined Variables
@@ -18,13 +17,13 @@ class Renderer implements GLEventListener {
 	private GLUquadric quadratic;
 	private GLU glu = new GLU();
 
-	private Matrix4f lastRot = new Matrix4f();
-	private Matrix4f thisRot = new Matrix4f();
-	private final Object matrixLock = new Object();
 	private float[] matrix = new float[16];
+	ArcBallInputHandler inputHandler;
 
-	private ArcBall arcBall = new ArcBall(640.0f, 480.0f); // NEW: ArcBall
-															// Instance
+	public Renderer(ArcBallInputHandler inputHandler) {
+		this.inputHandler = inputHandler;
+
+	}
 
 	public void reshape(GLAutoDrawable drawable, int x, int y, int width,
 			int height) {
@@ -48,7 +47,7 @@ class Renderer implements GLEventListener {
 		gl.glLoadIdentity();
 
 		// Update mouse bounds for arcball
-		arcBall.setBounds((float) width, (float) height);
+		inputHandler.arcBall.setBounds((float) width, (float) height);
 	}
 
 	public void displayChanged(GLAutoDrawable drawable, boolean modeChanged,
@@ -59,13 +58,8 @@ class Renderer implements GLEventListener {
 	public void init(GLAutoDrawable drawable) {
 		GL2 gl = drawable.getGL().getGL2();
 
-		// Start Of User Initialization
-		// Reset Rotation
-		lastRot.setIdentity();
-		// Reset Rotation
-		thisRot.setIdentity();
 
-		updateMatrix(thisRot);
+		updateMatrix(inputHandler.thisRotation);
 
 		// Black Background
 		gl.glClearColor(0.0f, 0.0f, 0.0f, 0.5f);
@@ -94,43 +88,6 @@ class Renderer implements GLEventListener {
 		gl.glEnable(GL2.GL_LIGHTING);
 		// Enable Color Material
 		gl.glEnable(GL2.GL_COLOR_MATERIAL);
-	}
-
-	/**
-	 * Resets the rotation matrices
-	 */
-	void reset() {
-		synchronized (matrixLock) {
-			lastRot.setIdentity();
-			thisRot.setIdentity();
-		}
-	}
-
-	void startDrag(Point MousePt) {
-		// Set Last Static Rotation To Last Dynamic One
-		synchronized (matrixLock) {
-			lastRot.set(thisRot);
-		}
-		// Update Start Vector And Prepare For Dragging
-		arcBall.click(MousePt);
-	}
-
-	/**
-	 * Perform Motion Updates Here
-	 * 
-	 * @param MousePt
-	 */
-	void drag(Point MousePt) {
-		Quat4f thisQuat = new Quat4f();
-
-		// Update End Vector And Get Rotation As Quaternion
-		arcBall.drag(MousePt, thisQuat);
-		synchronized (matrixLock) {
-			// Convert quaternion into Matrix3fT
-			thisRot.setRotation(thisQuat);
-			// Accumulate last rotation into this one
-			thisRot.mul(thisRot, lastRot);
-		}
 	}
 
 	/**
@@ -193,8 +150,8 @@ class Renderer implements GLEventListener {
 	}
 
 	public void display(GLAutoDrawable drawable) {
-		synchronized (matrixLock) {
-			updateMatrix(thisRot);
+		synchronized (inputHandler.matrixLock) {
+			updateMatrix(inputHandler.thisRotation);
 		}
 
 		GL2 gl = drawable.getGL().getGL2();
@@ -216,21 +173,21 @@ class Renderer implements GLEventListener {
 		gl.glPopMatrix();
 
 		// Reset The Current Modelview Matrix
-		gl.glLoadIdentity(); 
+		gl.glLoadIdentity();
 		// Move Right 1.5 Units And Into The Screen 7.0
-		gl.glTranslatef(1.5f, 0.0f, -6.0f); 
+		gl.glTranslatef(1.5f, 0.0f, -6.0f);
 
 		// NEW: Prepare Dynamic Transform
-		gl.glPushMatrix(); 
+		gl.glPushMatrix();
 		// NEW: Apply Dynamic Transform
-		gl.glMultMatrixf(matrix, 0); 
+		gl.glMultMatrixf(matrix, 0);
 		gl.glColor3f(1.0f, 0.75f, 0.75f);
 		glu.gluSphere(quadratic, 1.3f, 20, 20);
 		// NEW: Unapply Dynamic Transform
-		gl.glPopMatrix(); 
+		gl.glPopMatrix();
 
 		// Flush The GL Rendering Pipeline
-		gl.glFlush(); 
+		gl.glFlush();
 	}
 
 	private void updateMatrix(Matrix4f mat) {
