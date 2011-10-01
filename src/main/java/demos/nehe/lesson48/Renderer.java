@@ -9,6 +9,8 @@ import javax.media.opengl.GLEventListener;
 import javax.media.opengl.fixedfunc.GLMatrixFunc;
 import javax.media.opengl.glu.GLU;
 import javax.media.opengl.glu.GLUquadric;
+import javax.vecmath.Matrix4f;
+import javax.vecmath.Quat4f;
 
 class Renderer implements GLEventListener {
 	// User Defined Variables
@@ -58,31 +60,40 @@ class Renderer implements GLEventListener {
 		GL2 gl = drawable.getGL().getGL2();
 
 		// Start Of User Initialization
-		lastRot.setIdentity(); // Reset Rotation
-		thisRot.setIdentity(); // Reset Rotation
-		thisRot.get(matrix);
+		// Reset Rotation
+		lastRot.setIdentity();
+		// Reset Rotation
+		thisRot.setIdentity();
 
-		gl.glClearColor(0.0f, 0.0f, 0.0f, 0.5f); // Black Background
-		gl.glClearDepth(1.0f); // Depth Buffer Setup
-		gl.glDepthFunc(GL.GL_LEQUAL); // The Type Of Depth Testing (Less Or
-										// Equal)
-		gl.glEnable(GL.GL_DEPTH_TEST); // Enable Depth Testing
-		gl.glShadeModel(GL2.GL_FLAT); // Select Flat Shading (Nice definition of
-										// objects)
+		updateMatrix(thisRot);
+
+		// Black Background
+		gl.glClearColor(0.0f, 0.0f, 0.0f, 0.5f);
+		// Depth Buffer Setup
+		gl.glClearDepth(1.0f);
+		// The Type Of Depth Testing (Less Or Equal)
+		gl.glDepthFunc(GL.GL_LEQUAL);
+		// Enable Depth Testing
+		gl.glEnable(GL.GL_DEPTH_TEST);
+		// Select Flat Shading (Nice definition of objects)
+		gl.glShadeModel(GL2.GL_FLAT);
 
 		// Set perspective calculations to most accurate
 		gl.glHint(GL2.GL_PERSPECTIVE_CORRECTION_HINT, GL.GL_NICEST);
 
-		quadratic = glu.gluNewQuadric(); // Create A Pointer To The Quadric
-											// Object
-		glu.gluQuadricNormals(quadratic, GLU.GLU_SMOOTH); // Create Smooth
-															// Normals
-		glu.gluQuadricTexture(quadratic, true); // Create Texture Coords
+		// Create A Pointer To The Quadric Object
+		quadratic = glu.gluNewQuadric();
+		// Create Smooth Normals
+		glu.gluQuadricNormals(quadratic, GLU.GLU_SMOOTH);
+		// Create Texture Coords
+		glu.gluQuadricTexture(quadratic, true);
 
-		gl.glEnable(GL2.GL_LIGHT0); // Enable Default Light
-		gl.glEnable(GL2.GL_LIGHTING); // Enable Lighting
-
-		gl.glEnable(GL2.GL_COLOR_MATERIAL); // Enable Color Material
+		// Enable Default Light
+		gl.glEnable(GL2.GL_LIGHT0);
+		// Enable Lighting
+		gl.glEnable(GL2.GL_LIGHTING);
+		// Enable Color Material
+		gl.glEnable(GL2.GL_COLOR_MATERIAL);
 	}
 
 	/**
@@ -110,13 +121,13 @@ class Renderer implements GLEventListener {
 	 * @param MousePt
 	 */
 	void drag(Point MousePt) {
-		Quat4f ThisQuat = new Quat4f();
+		Quat4f thisQuat = new Quat4f();
 
 		// Update End Vector And Get Rotation As Quaternion
-		arcBall.drag(MousePt, ThisQuat);
+		arcBall.drag(MousePt, thisQuat);
 		synchronized (matrixLock) {
 			// Convert quaternion into Matrix3fT
-			thisRot.setRotation(ThisQuat);
+			thisRot.setRotation(thisQuat);
 			// Accumulate last rotation into this one
 			thisRot.mul(thisRot, lastRot);
 		}
@@ -183,7 +194,7 @@ class Renderer implements GLEventListener {
 
 	public void display(GLAutoDrawable drawable) {
 		synchronized (matrixLock) {
-			thisRot.get(matrix);
+			updateMatrix(thisRot);
 		}
 
 		GL2 gl = drawable.getGL().getGL2();
@@ -204,17 +215,44 @@ class Renderer implements GLEventListener {
 		// Unapply Dynamic Transform
 		gl.glPopMatrix();
 
-		gl.glLoadIdentity(); // Reset The Current Modelview Matrix
-		gl.glTranslatef(1.5f, 0.0f, -6.0f); // Move Right 1.5 Units And Into The
-											// Screen 7.0
+		// Reset The Current Modelview Matrix
+		gl.glLoadIdentity(); 
+		// Move Right 1.5 Units And Into The Screen 7.0
+		gl.glTranslatef(1.5f, 0.0f, -6.0f); 
 
-		gl.glPushMatrix(); // NEW: Prepare Dynamic Transform
-		gl.glMultMatrixf(matrix, 0); // NEW: Apply Dynamic Transform
+		// NEW: Prepare Dynamic Transform
+		gl.glPushMatrix(); 
+		// NEW: Apply Dynamic Transform
+		gl.glMultMatrixf(matrix, 0); 
 		gl.glColor3f(1.0f, 0.75f, 0.75f);
 		glu.gluSphere(quadratic, 1.3f, 20, 20);
-		gl.glPopMatrix(); // NEW: Unapply Dynamic Transform
+		// NEW: Unapply Dynamic Transform
+		gl.glPopMatrix(); 
 
-		gl.glFlush(); // Flush The GL Rendering Pipeline
+		// Flush The GL Rendering Pipeline
+		gl.glFlush(); 
+	}
+
+	private void updateMatrix(Matrix4f mat) {
+		matrix[0] = mat.m00;
+		matrix[1] = mat.m10;
+		matrix[2] = mat.m20;
+		matrix[3] = mat.m30;
+
+		matrix[4] = mat.m01;
+		matrix[5] = mat.m11;
+		matrix[6] = mat.m21;
+		matrix[7] = mat.m31;
+
+		matrix[8] = mat.m02;
+		matrix[9] = mat.m12;
+		matrix[10] = mat.m22;
+		matrix[11] = mat.m32;
+
+		matrix[12] = mat.m03;
+		matrix[13] = mat.m13;
+		matrix[14] = mat.m23;
+		matrix[15] = mat.m33;
 	}
 
 	public void dispose(GLAutoDrawable arg0) {

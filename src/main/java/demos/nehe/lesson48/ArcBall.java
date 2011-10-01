@@ -1,7 +1,10 @@
 package demos.nehe.lesson48;
 
-import java.awt.*;
+import java.awt.Point;
 
+import javax.vecmath.Quat4f;
+import javax.vecmath.Vector3f;
+import javax.vecmath.Point2f;
 /**
  * Created by IntelliJ IDEA.
  * User: pepijn
@@ -12,14 +15,14 @@ import java.awt.*;
 class ArcBall {
     private static final float Epsilon = 1.0e-5f;
 
-    Vector3f StVec;          //Saved click vector
-    Vector3f EnVec;          //Saved drag vector
+    Vector3f stVec;          //Saved click vector
+    Vector3f enVec;          //Saved drag vector
     float adjustWidth;       //Mouse bounds width
     float adjustHeight;      //Mouse bounds height
 
     public ArcBall(float NewWidth, float NewHeight) {
-        StVec = new Vector3f();
-        EnVec = new Vector3f();
+        stVec = new Vector3f();
+        enVec = new Vector3f();
         setBounds(NewWidth, NewHeight);
     }
 
@@ -63,31 +66,31 @@ class ArcBall {
 
     //Mouse down
     public void click(Point NewPt) {
-        mapToSphere(NewPt, this.StVec);
+        mapToSphere(NewPt, this.stVec);
 
     }
 
     //Mouse drag, calculate rotation
     public void drag(Point NewPt, Quat4f NewRot) {
         //Map the point to the sphere
-        this.mapToSphere(NewPt, EnVec);
+        this.mapToSphere(NewPt, enVec);
 
         //Return the quaternion equivalent to the rotation
         if (NewRot != null) {
-            Vector3f Perp = new Vector3f();
+            Vector3f perp = new Vector3f();
 
             //Compute the vector perpendicular to the begin and end vectors
-            Vector3f.cross(Perp, StVec, EnVec);
+            perp.cross(stVec, enVec);
 
             //Compute the length of the perpendicular vector
-            if (Perp.length() > Epsilon)    //if its non-zero
+            if (perp.length() > Epsilon)    //if its non-zero
             {
                 //We're ok, so return the perpendicular vector as the transform after all
-                NewRot.x = Perp.x;
-                NewRot.y = Perp.y;
-                NewRot.z = Perp.z;
+                NewRot.x = perp.x;
+                NewRot.y = perp.y;
+                NewRot.z = perp.z;
                 //In the quaternion values, w is cosine (theta / 2), where theta is rotation angle
-                NewRot.w = Vector3f.dot(StVec, EnVec);
+                NewRot.w = stVec.dot(enVec);
             } else                                    //if its zero
             {
                 //The begin and end vectors coincide, so return an identity transform
