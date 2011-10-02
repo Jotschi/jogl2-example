@@ -3,6 +3,8 @@ package demos.nehe.lesson44;
 import javax.media.opengl.GL;
 import javax.media.opengl.GL2;
 import javax.media.opengl.fixedfunc.GLMatrixFunc;
+import javax.vecmath.Tuple3f;
+import javax.vecmath.Vector3f;
 
 /**
  * I don't mind if you use this class in your own code. All I ask is that you
@@ -13,40 +15,41 @@ import javax.media.opengl.fixedfunc.GLMatrixFunc;
  * @author Vic Hollis
  * @author Abdul Bezrati
  */
-class Camera {
-	Tuple3f vLightSourceToIntersect;
-	Tuple3f vLightSourceToCamera;
-	Tuple3f m_DirectionVector;
-	Tuple3f m_LightSourcePos;
-	Tuple3f ptIntersect;
-	Tuple3f m_Position;
-	Tuple3f pt;
+public class Camera {
+	
+	public Vector3f vLightSourceToIntersect;
+	public Vector3f vLightSourceToCamera;
+	public Vector3f m_DirectionVector;
+	public Vector3f m_LightSourcePos;
+	public Vector3f ptIntersect;
+	public Vector3f m_Position;
+	public Vector3f pt;
 
-	float m_MaxForwardVelocity;
-	float m_ForwardVelocity;
-	float m_MaxHeadingRate;
-	float m_HeadingDegrees;
-	float m_PitchDegrees;
-	float m_MaxPitchRate;
-	float m_MaxPointSize;
-	float[][] m_Frustum;
+	public float m_MaxForwardVelocity;
+	public float m_ForwardVelocity;
+	public float m_MaxHeadingRate;
+	public float m_HeadingDegrees;
+	public float m_PitchDegrees;
+	public float m_MaxPitchRate;
+	public float m_MaxPointSize;
+	public float[][] m_Frustum;
 
-	int[] m_BigGlowTexture;
-	int[] m_StreakTexture;
-	int[] m_HaloTexture;
-	int[] m_GlowTexture;
-	int m_WindowHeight;
-	int m_WindowWidth;
+	public int[] m_BigGlowTexture;
+	public int[] m_StreakTexture;
+	public int[] m_HaloTexture;
+	public int[] m_GlowTexture;
+	public int m_WindowHeight;
+	public int m_WindowWidth;
 
 	public Camera() {
 		// Initalize all our member varibles.
-		vLightSourceToIntersect = new Tuple3f();
-		vLightSourceToCamera = new Tuple3f();
-		m_DirectionVector = new Tuple3f();
-		m_LightSourcePos = new Tuple3f();
-		ptIntersect = new Tuple3f();
-		m_Position = new Tuple3f();
-		pt = new Tuple3f();
+		vLightSourceToIntersect = new Vector3f();
+		vLightSourceToCamera = new Vector3f();
+		m_DirectionVector = new Vector3f();
+		m_LightSourcePos = new Vector3f();
+		ptIntersect = new Vector3f();
+		m_Position = new Vector3f();
+		pt = new Vector3f();
 		m_Frustum = new float[6][4];
 		m_MaxForwardVelocity = 0;
 		m_LightSourcePos.x = 0;
@@ -66,7 +69,7 @@ class Camera {
 
 	public void setPrespective(GL2 gl) {
 		// A vector to hold our cameras direction * the forward velocity
-		Tuple3f v = new Tuple3f();
+		Vector3f v = new Vector3f();
 		// A array to hold the model view matrix.
 		float Matrix[] = new float[16];
 		// we don't want to destory the Direction vector by using it instead.
@@ -620,8 +623,9 @@ class Camera {
 			// point from the light source
 			Length = vLightSourceToIntersect.length(); // Save the length we
 														// will need it later.
-			vLightSourceToIntersect.normalize(); // Normalize the vector so its
-													// unit length
+			// Normalize the vector so its
+			// unit length
+			vLightSourceToIntersect.normalize(); 
 
 			gl.glEnable(GL.GL_BLEND); // You should already know what this does
 			gl.glBlendFunc(GL.GL_SRC_ALPHA, GL.GL_ONE); // You should already
@@ -752,11 +756,11 @@ class Camera {
 	}
 
 	private void renderHalo(GL2 gl, float r, float g, float b, float a,
-			Tuple3f p, float scale) {
+			Vector3f p, float scale) {
 
-		Tuple3f[] q = new Tuple3f[4];
+		Vector3f[] q = new Vector3f[4];
 		for (int i = 3; i >= 0; i--)
-			q[i] = new Tuple3f();
+			q[i] = new Vector3f();
 		// Basically we are just going to make a 2D box
 		// from four points we don't need a z coord because
 		// we are rotating the camera by the inverse so the
@@ -809,11 +813,11 @@ class Camera {
 	}
 
 	private void renderGlow(GL2 gl, float r, float g, float b, float a,
-			Tuple3f p, float scale) {
+			Vector3f p, float scale) {
 
-		Tuple3f[] q = new Tuple3f[4];
+		Vector3f[] q = new Vector3f[4];
 		for (int i = 3; i >= 0; i--)
-			q[i] = new Tuple3f();
+			q[i] = new Vector3f();
 
 		// Basically we are just going to make a 2D box
 		// from four points we don't need a z coord because
@@ -867,7 +871,7 @@ class Camera {
 
 		Tuple3f[] q = new Tuple3f[4];
 		for (int i = 3; i >= 0; i--)
-			q[i] = new Tuple3f();
+			q[i] = new Vector3f();
 
 		// Basically we are just going to make a 2D box
 		// from four points we don't need a z coord because
@@ -922,7 +926,7 @@ class Camera {
 
 		Tuple3f[] q = new Tuple3f[4];
 		for (int i = 3; i >= 0; i--)
-			q[i] = new Tuple3f();
+			q[i] = new Vector3f();
 		// Basically we are just going to make a 2D box
 		// from four points we don't need a z coord because
 		// we are rotating the camera by the inverse so the
@@ -954,11 +958,11 @@ class Camera {
 		gl.glBindTexture(GL.GL_TEXTURE_2D, m_StreakTexture[0]); // Bind to the
 																// Big Glow
 																// texture
-		gl.glColor4f(r, g, b, a); // Set the color since the texture is a gray
-									// scale
+		// Set the color since the texture is a gray scale
+		gl.glColor4f(r, g, b, a); 
 
-		gl.glBegin(GL.GL_TRIANGLE_STRIP); // Draw the Big Glow on a Triangle
-											// Strip
+		// Draw the Big Glow on a Triangle Strip
+		gl.glBegin(GL.GL_TRIANGLE_STRIP); 
 		gl.glTexCoord2f(0.0f, 0.0f);
 		gl.glVertex2f(q[0].x, q[0].y);
 		gl.glTexCoord2f(0.0f, 1.0f);

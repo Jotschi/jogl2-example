@@ -242,14 +242,10 @@ class Renderer implements GLEventListener {
 		update();
 		GL2 gl = drawable.getGL().getGL2();
 
-		gl.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT); // Clear
-																		// The
-																		// Screen
-																		// And
-																		// The
-																		// Depth
-																		// Buffer
-		gl.glLoadIdentity(); // Reset The View
+		// Clear The Screen And The Depth Buffer
+		gl.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT);
+		// Reset The View
+		gl.glLoadIdentity(); 
 
 		if (!blendingEnabled) {
 			gl.glDisable(GL.GL_BLEND);

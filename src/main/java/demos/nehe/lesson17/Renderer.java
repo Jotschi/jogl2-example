@@ -83,11 +83,8 @@ class Renderer implements GLEventListener {
 		} // Loop Until All 256 Are Built
 	}
 
-	private void glPrint(GL2 gl, int x, int y, String string, int set) // Where
-																		// The
-																		// Printing
-																		// Happens
-	{
+	// Where The Printing Happens
+	private void glPrint(GL2 gl, int x, int y, String string, int set) {
 		if (set > 1) {
 			set = 1;
 		}
@@ -99,8 +96,8 @@ class Renderer implements GLEventListener {
 		gl.glPushMatrix(); // Store The Projection Matrix
 		gl.glLoadIdentity(); // Reset The Projection Matrix
 		gl.glOrtho(0, 640, 0, 480, -1, 1); // Set Up An Ortho Screen
-		gl.glMatrixMode(GLMatrixFunc.GL_MODELVIEW); // Select The Modelview
-													// Matrix
+		// Select The Modelview Matrix
+		gl.glMatrixMode(GLMatrixFunc.GL_MODELVIEW); 
 		gl.glPushMatrix(); // Store The Modelview Matrix
 		gl.glLoadIdentity(); // Reset The Modelview Matrix
 		gl.glTranslated(x, y, 0); // Position The Text (0,0 - Bottom Left)

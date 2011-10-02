@@ -11,6 +11,12 @@ import javax.vecmath.Matrix4f;
 import javax.vecmath.Quat4f;
 import javax.vecmath.Vector3f;
 
+/**
+ * This Inputhandler will just deliver a transformation matrix not a viewmatrix.
+ * 
+ * @author jotschi
+ * 
+ */
 public class ArcBallInputHandler extends MouseInputAdapter implements
 		KeyListener {
 
@@ -19,6 +25,7 @@ public class ArcBallInputHandler extends MouseInputAdapter implements
 	public Matrix4f lastRotation = new Matrix4f();
 	public Matrix4f thisRotation = new Matrix4f();
 	public final Object matrixLock = new Object();
+	private float[] matrix = new float[16];
 
 	public ArcBall arcBall = new ArcBall(640.0f, 480.0f);
 
@@ -33,6 +40,38 @@ public class ArcBallInputHandler extends MouseInputAdapter implements
 
 		lastRotation.setIdentity();
 		thisRotation.setIdentity();
+	}
+
+	public float[] getTransformMatrix() {
+
+		synchronized (matrixLock) {
+			updateMatrix();
+		}
+
+		return this.matrix;
+	}
+
+	private void updateMatrix() {
+		Matrix4f mat = thisRotation;
+		matrix[0] = mat.m00;
+		matrix[1] = mat.m10;
+		matrix[2] = mat.m20;
+		matrix[3] = mat.m30;
+
+		matrix[4] = mat.m01;
+		matrix[5] = mat.m11;
+		matrix[6] = mat.m21;
+		matrix[7] = mat.m31;
+
+		matrix[8] = mat.m02;
+		matrix[9] = mat.m12;
+		matrix[10] = mat.m22;
+		matrix[11] = mat.m32;
+
+		matrix[12] = mat.m03;
+		matrix[13] = mat.m13;
+		matrix[14] = mat.m23;
+		matrix[15] = mat.m33;
 	}
 
 	public void mouseClicked(MouseEvent e) {

@@ -10,6 +10,7 @@ import javax.media.opengl.GLAutoDrawable;
 import javax.media.opengl.GLEventListener;
 import javax.media.opengl.fixedfunc.GLMatrixFunc;
 import javax.media.opengl.glu.GLU;
+import javax.media.opengl.glu.gl2.GLUgl2;
 
 import com.jogamp.opengl.util.GLBuffers;
 
@@ -30,7 +31,7 @@ class Renderer implements GLEventListener {
 	// Storage For 6 Textures (Modified)
 	private int textures[] = new int[1];
 
-	private GLU glu = new GLU();
+	private GLUgl2 glu = new GLUgl2();
 
 	public Renderer() {
 	}
@@ -75,7 +76,7 @@ class Renderer implements GLEventListener {
 		inputStream.close(); // Close The File
 	}
 
-	private void buildTexture(GL gl, GLU glu, TextureImage tex) {
+	private void buildTexture(GL gl, GLUgl2 glu, TextureImage tex) {
 		gl.glGenTextures(1, textures, 0);
 		gl.glBindTexture(GL2.GL_TEXTURE_2D, textures[0]);
 		gl.glTexParameteri(GL2.GL_TEXTURE_2D, GL2.GL_TEXTURE_MAG_FILTER,

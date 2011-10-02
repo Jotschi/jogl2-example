@@ -7,7 +7,6 @@ import javax.media.opengl.GLEventListener;
 import javax.media.opengl.fixedfunc.GLMatrixFunc;
 import javax.media.opengl.glu.GLU;
 import javax.media.opengl.glu.GLUquadric;
-import javax.vecmath.Matrix4f;
 
 import demos.common.ArcBallInputHandler;
 
@@ -17,13 +16,14 @@ class Renderer implements GLEventListener {
 	private GLUquadric quadratic;
 	private GLU glu = new GLU();
 
-	private float[] matrix = new float[16];
 	ArcBallInputHandler inputHandler;
 
 	public Renderer(ArcBallInputHandler inputHandler) {
 		this.inputHandler = inputHandler;
 
 	}
+
+	
 
 	public void reshape(GLAutoDrawable drawable, int x, int y, int width,
 			int height) {
@@ -57,9 +57,6 @@ class Renderer implements GLEventListener {
 
 	public void init(GLAutoDrawable drawable) {
 		GL2 gl = drawable.getGL().getGL2();
-
-
-		updateMatrix(inputHandler.thisRotation);
 
 		// Black Background
 		gl.glClearColor(0.0f, 0.0f, 0.0f, 0.5f);
@@ -150,9 +147,7 @@ class Renderer implements GLEventListener {
 	}
 
 	public void display(GLAutoDrawable drawable) {
-		synchronized (inputHandler.matrixLock) {
-			updateMatrix(inputHandler.thisRotation);
-		}
+	
 
 		GL2 gl = drawable.getGL().getGL2();
 
@@ -166,7 +161,7 @@ class Renderer implements GLEventListener {
 		// Prepare Dynamic Transform
 		gl.glPushMatrix();
 		// Apply Dynamic Transform
-		gl.glMultMatrixf(matrix, 0);
+		gl.glMultMatrixf(inputHandler.getTransformMatrix(), 0);
 		gl.glColor3f(0.75f, 0.75f, 1.0f);
 		torus(gl, 0.30f, 1.00f);
 		// Unapply Dynamic Transform
@@ -177,10 +172,10 @@ class Renderer implements GLEventListener {
 		// Move Right 1.5 Units And Into The Screen 7.0
 		gl.glTranslatef(1.5f, 0.0f, -6.0f);
 
-		// NEW: Prepare Dynamic Transform
+		// Prepare Dynamic Transform
 		gl.glPushMatrix();
-		// NEW: Apply Dynamic Transform
-		gl.glMultMatrixf(matrix, 0);
+		// Apply Dynamic Transform
+		gl.glMultMatrixf(inputHandler.getTransformMatrix(), 0);
 		gl.glColor3f(1.0f, 0.75f, 0.75f);
 		glu.gluSphere(quadratic, 1.3f, 20, 20);
 		// NEW: Unapply Dynamic Transform
@@ -190,27 +185,7 @@ class Renderer implements GLEventListener {
 		gl.glFlush();
 	}
 
-	private void updateMatrix(Matrix4f mat) {
-		matrix[0] = mat.m00;
-		matrix[1] = mat.m10;
-		matrix[2] = mat.m20;
-		matrix[3] = mat.m30;
-
-		matrix[4] = mat.m01;
-		matrix[5] = mat.m11;
-		matrix[6] = mat.m21;
-		matrix[7] = mat.m31;
-
-		matrix[8] = mat.m02;
-		matrix[9] = mat.m12;
-		matrix[10] = mat.m22;
-		matrix[11] = mat.m32;
-
-		matrix[12] = mat.m03;
-		matrix[13] = mat.m13;
-		matrix[14] = mat.m23;
-		matrix[15] = mat.m33;
-	}
+	
 
 	public void dispose(GLAutoDrawable arg0) {
 		// TODO Auto-generated method stub
