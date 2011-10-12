@@ -1,4 +1,4 @@
-package de.jotschi.jogl2.example.camera;
+package de.jotschi.jogl2.example.matrix;
 
 import javax.media.opengl.GL;
 import javax.media.opengl.GL2;
@@ -6,17 +6,17 @@ import javax.media.opengl.GLAutoDrawable;
 import javax.media.opengl.GLEventListener;
 import javax.media.opengl.fixedfunc.GLMatrixFunc;
 import javax.media.opengl.glu.gl2.GLUgl2;
+import javax.vecmath.Matrix4f;
+import javax.vecmath.Vector3f;
 
-import demos.common.ArcBallInputHandler;
+import demos.common.Matrix4fe;
 
-class CameraExampleRenderer implements GLEventListener {
+class ModelViewExampleRenderer implements GLEventListener {
 
 	private GLUgl2 glu = new GLUgl2();
 
-	ArcBallInputHandler input;
+	public ModelViewExampleRenderer() {
 
-	public CameraExampleRenderer(ArcBallInputHandler input) {
-		this.input = input;
 	}
 
 	/**
@@ -30,29 +30,74 @@ class CameraExampleRenderer implements GLEventListener {
 	public void display(GLAutoDrawable gLDrawable) {
 		final GL2 gl = gLDrawable.getGL().getGL2();
 		gl.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT);
+
+		// Setup the projection matrix
+		gl.glMatrixMode(GLMatrixFunc.GL_PROJECTION);
 		gl.glLoadIdentity();
-		
+		glu.gluPerspective(45.0f, 800 / 600, 0.1f, 100f);
 
+		// 1. Setup some parameters for our camera
+		Vector3f eye = new Vector3f(10f, 10f, 10f);
+		Vector3f center = new Vector3f(0f, 0f, 0f);
+		Vector3f up = new Vector3f(0f, 1f, 0f);
 
-		glu.gluLookAt(10, 10, 0, 0, 0, 0, 1, 0, 0);
-//		glu.gluPerspective(45, (float) width / height, 1, 1000);
-		//gl.glMultMatrixf(input.getModelViewMatrix(), 0);
-//		gl.glMatrixMode(GLMatrixFunc.GL_MODELVIEW);
-		//gl.glLoadIdentity();
+		// 2. Calculate the modelview matrix and load it into the opengl matrix
+		// stack
+		float[] mv = calculateModelViewMatrix(eye, center, up);
+		gl.glMatrixMode(GLMatrixFunc.GL_MODELVIEW);
+		gl.glLoadMatrixf(mv, 0);
 
-		
-		
-		
-//		// gl.glRotatef(rtri, 0.0f, 1.0f, 0.0f);
-	
-
+		// 3. Draw the objects
 		drawObjects(gl);
-		
-		//gl.glMatrixMode(GLMatrixFunc.GL_MODELVIEW);
-		
-		 //gl.glPushMatrix();
-		
-		
+
+	}
+
+	public float[] calculateModelViewMatrix(Vector3f eye, Vector3f center,
+			Vector3f up) {
+
+		// Create a new matrix that will hold the modelview matrix
+		Matrix4fe mv = new Matrix4fe();
+
+		// Set the identity matrix
+		mv.setIdentity();
+
+		// Calculate the forward vector
+		Vector3f forward = new Vector3f();
+		forward.sub(center, eye);
+		forward.normalize();
+
+		// Calculate the side vector by calculating the cross product of the
+		// forward and up vector
+		Vector3f side = new Vector3f();
+		side.cross(forward, up);
+		side.normalize();
+
+		// Recalculate up
+		up.cross(side, forward);
+
+		// Set the matrix fields
+		mv.setElement(0, 0, side.getX());
+		mv.setElement(0, 1, side.getY());
+		mv.setElement(0, 2, side.getZ());
+
+		mv.setElement(1, 0, up.getX());
+		mv.setElement(1, 1, up.getY());
+		mv.setElement(1, 2, up.getZ());
+
+		mv.setElement(2, 0, -forward.getX());
+		mv.setElement(2, 1, -forward.getY());
+		mv.setElement(2, 2, -forward.getZ());
+
+		// Negate the eye vector and create a translation matrix
+		eye.negate();
+		Matrix4f translationMatrix = new Matrix4f();
+		translationMatrix.setIdentity();
+		translationMatrix.setTranslation(eye);
+
+		// Apply the translation
+		mv.mul(translationMatrix);
+
+		return mv.getFloatArray();
 	}
 
 	public void drawObjects(GL2 gl) {
